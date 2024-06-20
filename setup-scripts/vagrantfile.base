@@ -1,0 +1,65 @@
+machine_name = "my-machine"
+username = "me"
+
+# this sets the location of the vm files
+# e.g. base_directory = "D:\\Virtual Machines\\vagrant"
+base_directory = __dir__
+
+VAGRANT_DOTFILE_PATH = "#{base_directory}\\#{machine_name}\\.vagrant"
+
+currpath = ENV['VAGRANT_DOTFILE_PATH'];
+if(currpath.nil?)
+    currpath = '.vagrant';
+end
+puts currpath #debugging
+if(currpath != VAGRANT_DOTFILE_PATH)
+    ENV['VAGRANT_DOTFILE_PATH'] = VAGRANT_DOTFILE_PATH
+    ret = system "vagrant",*ARGV
+    FileUtils.rm_r(currpath)
+    if(ret)
+      exit
+    else
+      abort "Finished"
+    end
+end
+
+
+Vagrant.configure("2") do |config|  
+  config.vm.box = "gusztavvargadr/windows-11"   
+
+  config.vm.provider "hyperv" do |h|
+        h.vmname = "#{machine_name}-vm"
+        h.cpus = 6
+        h.memory = "8192"
+        h.enable_virtualization_extensions = true
+        h.linked_clone = true                
+    end
+
+  config.vm.provision "base-config", type: "file" do |f|
+      f.source = "../setup-scripts/base.config"
+      f.destination = "C:\\#{machine_name}-config\\base.config"
+    end
+
+  config.vm.provision "custom-config", type: "file" do |f|
+      f.source = "./"
+      f.destination = "C:\\#{machine_name}-config"
+    end
+
+  config.vm.provision "setup-user", type: "shell" do |s|
+      s.privileged = "true"
+      s.powershell_elevated_interactive = "true"
+      s.path = "../setup-scripts/Setup-User.ps1"
+      s.args = "#{username}"
+    end
+
+  config.vm.provision "setup-machine", type: "shell" do |s|
+      s.privileged = "true"
+      s.powershell_elevated_interactive = "true"
+      s.path = "../setup-scripts/Setup-Machine.ps1"
+      s.args = "#{username} #{machine_name}"
+      # s.powerhsell_args = "#{username} #{machine_name}"
+    end
+  
+  
+  config.vm.network "public_network"
+end
