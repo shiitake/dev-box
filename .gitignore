@@ -1,0 +1,30 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+
+# Ignore Vagrant directory
+.vagrant/
+**/.vagrant/
+
+# Ignore temporary files and swap files
+*.bak
+*.swp
+*~
+
+# Ignore data directories
+data/
+log/
+
+# Ignore environment variables declaration file
+.env
+
+# Ignore local configuration file
+config/local.config.yml
