@@ -47,14 +47,14 @@ $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";"
 # 5. Install base applications
 Write-Host "Installing base applications"
 $baseConfigPath = "C:\$machinename-config\base.config"
-choco install -y $baseConfigPath
+choco install -y $baseConfigPath --limitoutput --no-progress 
 
 # 6. Install custom applications 
 $configPath = "C:\$machinename-config\$machinename\$machinename.config"
 if (Test-Path $configPath)
 {
   write-host "Installing custom applications from $machinename.config"
-  choco install -y $configPath
+  choco install -y $configPath --limitoutput --no-progress
 }
 
 # 6. Run custom setup.ps1

@@ -17,11 +17,17 @@ This will be automated soon.  For now you have to do it manually.
   * `username` - this is the user that will be created on the vm
   * `base_directory` - this sets the location of the vm files. 
   * You can also customize the box, cpu and memory for the vm. By default it is using Windows 11 enterprise, 6 CPUs and 8 GB of RAM. 
+  * If you have a custom box you'd like to use you will want to update the vagrant file to point to that box by default it points to `gusztavvargadr/windows-11`
 4. [Optional] Copy `setup-scripts\custom.ps1` to the vm folder and rename it `<your-machine-name>.ps1`.
   * edit this script and add any custom powershell that you want to run when the machine is provisioned. 
 5. [Optional] Copy `setup-scripts\custom.config` to the vm folder and rename it `<your-machine-name>.config`    
   * edit this config to add any chocolatey packages to the machine (see `setup-scripts\base.config` for a list of default chocolatey packages that are installed by default)
 6. Navigate to your VM folder and run `vagrant up --provider=hyperv` from an elevated command prompt.  This will create and provision your new vm
+
+
+### Adding custom box
+`vagrant box add <box-name> <location of box file>`
+
 
 ### Todo: 
 * create script to automate all the steps above
