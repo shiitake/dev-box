@@ -28,3 +28,6 @@ log/
 
 # Ignore local configuration file
 config/local.config.yml
+
+# ignore devbox machine directories
+machines/

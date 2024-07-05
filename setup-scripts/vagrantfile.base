@@ -1,16 +1,20 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-machine_name = "my-machine"
-user_name = "me"
-
 Vagrant.configure("2") do |config|
+  config.env.enable
+
+  machine_name = ENV['MACHINE_NAME']
+  user_name = ENV['USER_NAME'] ||= "vagrant"
+  box_name = ENV['BOX_NAME'] ||= "gusztavvargadr/windows-11"
+
+
   config.winrm.username = "#{user_name}"
   config.winrm.password = "#{user_name}"
 
   config.vm.define "#{machine_name}" do |m|
   
-    m.vm.box = "gusztavvargadr/windows-11"
+    m.vm.box = "#{box_name}"
     m.vm.hostname = "#{machine_name}"
     m.vm.guest = :windows
 
@@ -23,7 +27,7 @@ Vagrant.configure("2") do |config|
     end
 
     m.vm.provision "base-config", type: "file" do |f|
-      f.source = "../setup-scripts/base.config"
+      f.source = "../../setup-scripts/base.config"
       f.destination = "C:\\#{machine_name}-config\\base.config"
     end
 
@@ -35,18 +39,18 @@ Vagrant.configure("2") do |config|
     m.vm.provision "setup-user", type: "shell" do |s|
       s.privileged = "true"
       s.powershell_elevated_interactive = "true"
-      s.path = "../setup-scripts/Setup-User.ps1"
+      s.path = "../../setup-scripts/Setup-User.ps1"
       s.args = "#{user_name}"
     end
 
     m.vm.provision "setup-machine", type: "shell" do |s|
       s.privileged = "true"
       s.powershell_elevated_interactive = "true"
-      s.path = "../setup-scripts/Setup-Machine.ps1"
+      s.path = "../../setup-scripts/Setup-Machine.ps1"
       s.args = "#{user_name} #{machine_name}"      
-      end
+    end
 
-    m.vm.provision "reboot", type "shell", inline: "echo Rebooting", reboot: true
+    m.vm.provision "reboot", type: "shell", inline: "echo Rebooting", reboot: true
     
     m.vm.network "public_network"
   end
