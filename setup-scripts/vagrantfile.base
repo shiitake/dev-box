@@ -1,7 +1,13 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
 machine_name = "my-machine"
-username = "me"
+user_name = "me"
 
 Vagrant.configure("2") do |config|
+  config.winrm.username = "#{user_name}"
+  config.winrm.password = "#{user_name}"
+
   config.vm.define "#{machine_name}" do |m|
   
     m.vm.box = "gusztavvargadr/windows-11"
@@ -30,16 +36,17 @@ Vagrant.configure("2") do |config|
       s.privileged = "true"
       s.powershell_elevated_interactive = "true"
       s.path = "../setup-scripts/Setup-User.ps1"
-      s.args = "#{username}"
+      s.args = "#{user_name}"
     end
 
     m.vm.provision "setup-machine", type: "shell" do |s|
       s.privileged = "true"
       s.powershell_elevated_interactive = "true"
       s.path = "../setup-scripts/Setup-Machine.ps1"
-      s.args = "#{username} #{machine_name}"
-      # s.powerhsell_args = "#{username} #{machine_name}"
+      s.args = "#{user_name} #{machine_name}"      
       end
+
+    m.vm.provision "reboot", type "shell", inline: "echo Rebooting", reboot: true
     
     m.vm.network "public_network"
   end
